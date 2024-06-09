@@ -1,27 +1,32 @@
-import * as React from 'react';
+import * as React from "react"
+import { StyleSheet, View, Text } from "react-native"
+import QuickBuffer from "react-native-quick-buffer"
 
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-quick-buffer';
+const b = new QuickBuffer(10)
 
-const result = multiply(3, 7);
+console.log(b)
 
-export default function App() {
+
+const App: React.FC = () => {
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text>Result</Text>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center"
   },
   box: {
     width: 60,
     height: 60,
-    marginVertical: 20,
-  },
-});
+    marginVertical: 20
+  }
+})
+
+
+export default App

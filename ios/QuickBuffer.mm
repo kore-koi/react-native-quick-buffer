@@ -1,21 +1,38 @@
+#import <React/RCTBridge+Private.h>
+#import <React/RCTUtils.h>
+#import <ReactCommon/RCTTurboModule.h>
+#import <jsi/jsi.h>
+
 #import "QuickBuffer.h"
+#import "QuickBufferHostObject.hpp"
 
 @implementation QuickBuffer
-RCT_EXPORT_MODULE()
 
-// Don't compile this code when we build for the old architecture.
-#ifdef RCT_NEW_ARCH_ENABLED
-- (NSNumber *)multiply:(double)a b:(double)b {
-    NSNumber *result = @(quickbuffer::multiply(a, b));
+RCT_EXPORT_MODULE(QuickBuffer)
 
-    return result;
-}
-
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(install)
 {
-    return std::make_shared<facebook::react::NativeQuickBufferSpecJSI>(params);
+  NSLog(@"Installing JSI bindings for react-native-quick-buffer...");
+  RCTBridge* bridge = [RCTBridge currentBridge];
+  RCTCxxBridge* cxxBridge = (RCTCxxBridge*)bridge;
+  if (cxxBridge == nil) {
+    return @false;
+  }
+
+  using namespace facebook;
+
+  auto jsiRuntime = (jsi::Runtime*) cxxBridge.runtime;
+  if (jsiRuntime == nil) {
+    return @false;
+  }
+    auto& runtime = *jsiRuntime;
+
+    auto hostObject = std::make_shared<QuickBufferHostObject>();
+  auto object = jsi::Object::createFromHostObject(runtime, hostObject);
+  runtime.global().setProperty(runtime, "__BufferProxy", std::move(object));
+
+  NSLog(@"Successfully installed JSI bindings for react-native-quick-buffer");
+  return @true;
 }
-#endif
 
 @end
